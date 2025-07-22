@@ -7,6 +7,7 @@ from .tile import Tile, Suit
 class Deck:
     def __init__(self):
         self._tiles = []
+        self._deck = deque()
         self.reset()
         
     #resets the deck to a full shuffled set of tiles      
