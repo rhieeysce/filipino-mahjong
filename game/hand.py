@@ -40,72 +40,68 @@ class Hand:
         self._chars = [0] * 10
         
         
-    #returns true if the hand has mahjong
-    #does not account for 7 pairs
-    #WIP
+    # returns True if the hand is a valid Mahjong hand
+    # for every possible pair, remove the pair and check if the remaining tiles can form sets
+    # Note: This is a simplified version and may not cover all Mahjong rules
+    # remove the pair, remove the triplets and quads, and check if the rest can be split into sequences of 3
     def is_mahjong(self):
         
-        pairs = self.check_pairs()
-        if pairs == 1:
-            trips = self.check_trips()
-            straights = self.check_straights()
-            quads = self.check_quads()
-            
-            if trips + quads + straights == 5:
-                return True
+        def checkMades(suit):
+            clone = suit.copy()
+            # remove all triplets
+            for i in range(1, 10):
+                if clone[i] >= 3:
+                    clone[i] -= 3
+            for i in range(3, 10):
+                if clone[i] >= 1 and clone[i-1] >= 1 and clone[i-2] >= 1:
+                    clone[i] -= 1
+                    clone[i-1] -= 1
+                    clone[i-2] -= 1
+            return sum(clone) == 0
         
+        # remove every pair in balls suit
+        # check if the rest can be split into trips and sequences of 3
+        if sum(self._balls) % 3 == 2 and sum(self._sticks) % 3 == 0 and sum(self._chars) % 3 == 0:
+            # remove pairs from balls
+            for i in range(1, 10):
+                if self._balls[i] >= 2:
+                    self._balls[i] -= 2
+                    if checkMades(self._balls) and checkMades(self._sticks) and checkMades(self._chars):
+                        self._balls[i] += 2
+                        return True
+                    self._balls[i] += 2
+                    
+            return False
+          
+          
+        # remove every pair in sticks suit
+        # check if the rest can be split into trips and sequences of 3  
+        elif sum(self._balls) % 3 == 0 and sum(self._sticks) % 3 == 2 and sum(self._chars) % 3 == 0:
+            for i in range(1, 10):
+                if self._sticks[i] >= 2:
+                    self._sticks[i] -= 2
+                    if checkMades(self._balls) and checkMades(self._sticks) and checkMades(self._chars):
+                        self._sticks[i] += 2
+                        return True
+                    self._sticks[i] += 2
+            return False
+        
+        # remove every pair in characters suit
+        # check if the rest can be split into trips and sequences of 3
+        elif sum(self._balls) % 3 == 0 and sum(self._sticks) % 3 == 0 and sum(self._chars) % 3 == 2:
+            for i in range(1, 10):
+                if self._chars[i] >= 2:
+                    self._chars[i] -= 2
+                    if checkMades(self._balls) and checkMades(self._sticks) and checkMades(self._chars):
+                        self._chars[i] += 2
+                        return True
+                    self._chars[i] += 2
+            return False
+
         return False
-        
-     #return the number of quads in the hand
-    def check_quads(self):
-        ans = 0
-        for i in range(10):
-            if self._balls[i] == 4:
-                ans += 1
-            if self._sticks[i] == 4:
-                ans += 1
-            if self._chars[i] == 4:
-                ans += 1
-        return ans
             
-     
-    #returns the number of three of a kinds in the hand
-    #counts kang as 2 trips
-    #WIP sliding window?
-    def check_trips(self):    
-        ans = 0
-        for i in range(10):
-            if self._balls[i] == 3:
-                ans += 1
-            if self._sticks[i] == 3:
-                ans += 1
-            if self._chars[i] == 3:
-                ans += 1
-        return ans
-        
-        
-    #returns the number of pairs in the hand
-    #doesnt work!!!!! 11 123 
-    def check_pairs(self): 
-        ans = 0
-        for i in range(10):
-            if self._balls[i] == 2:
-                ans += 1
-            if self._sticks[i] == 2:
-                ans += 1
-            if self._chars[i] == 2:
-                ans += 1
-        return ans
-        
-        
-    #returns the number of 3 tile sequences in the hand
-    #how to check 1,1,2,2,3,3 for 2 straights?
-    #WIP
-    def check_straights(self):
-        L = 0
-        C = 1
-        R = 2
-        return 0
+    
+            
         
         
     #returns the number of tiles in the hand
