@@ -1,12 +1,10 @@
-from game.tile import Suit, Tile
-from game.deck import Deck
-from game.hand import Hand
-
+from game.game_state import GameState
 
 
 def main():
-    deck = Deck()
-    print(deck)
+    gs = GameState("Player 1")
+    gs.play()
+
 
 if __name__ == "__main__":
     main()

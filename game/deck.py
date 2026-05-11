@@ -9,7 +9,7 @@ class Deck:
         self._tiles = []
         self.allTiles()
         self._deck = deque()
-        self._discarded = set()
+        self._discarded = []
         
         
     def allTiles(self):
@@ -36,7 +36,7 @@ class Deck:
         return self._deck.pop()
     
     def discard(self, tile: Tile):
-        self._discarded.add(tile)
+        self._discarded.append(tile)
     
     #ONLY called when the deck is empty
     #reshuffles the discarded tiles back into the deck
@@ -44,9 +44,9 @@ class Deck:
     def reshuffleDiscarded(self):
         if not self._discarded:
             raise ValueError("No discarded tiles to reshuffle")
-        tmp = list(self._discarded)
-        random.shuffle(tmp)
-        self._deck = deque(tmp)
+        random.shuffle(self._discarded)
+        self._deck = deque(self._discarded)
+        self._discarded = []
         
     
     #returns the number of tiles in the deck
