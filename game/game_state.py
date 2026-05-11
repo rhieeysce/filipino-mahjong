@@ -39,7 +39,7 @@ class GameState:
         while player.hand.would_complete_secret(drawn):
             player.hand.add(drawn)
             player.hand.lock_secret(drawn.suit, drawn.value)
-            print(f"{player.name}: Secret!")
+            print(f"\n{player.name}: Secret Kong!")
             drawn = self.deck.flower()
             while drawn.suit == Suit.FLOWERS:
                 drawn = self.deck.flower()
@@ -51,6 +51,7 @@ class GameState:
         player.hand.add(claimed)
         tiles = [claimed] + [Tile(claimed.suit, v) for v in other_values]
         player.hand.lock_claimed_made(tiles)
+        print(f"\n{player.name} reveals Chow: {[str(t) for t in tiles]}")
         self.last_discard = None
 
     def _resolve_claims(self, discard: Tile, discarder_idx: int) -> int | None:
@@ -77,6 +78,8 @@ class GameState:
         n_tiles = 4 if action == 'kong' else 3
         made = [Tile(discard.suit, discard.value)] * n_tiles
         claimer.hand.lock_claimed_made(made)
+        label = 'Kong' if action == 'kong' else 'Pong'
+        print(f"\n{claimer.name} reveals {label}: {[str(t) for t in made]}")
 
         if action == 'kong':
             bonus = self.deck.flower()
@@ -89,6 +92,7 @@ class GameState:
         new_discard = claimer.choose_discard()
         claimer.hand.discard(new_discard)
         self.deck.discard(new_discard)
+        print(f"\n{claimer.name} discards: {new_discard}")
         self.last_discard = new_discard
         self.last_discard_player_idx = claimer_idx
 
@@ -110,6 +114,8 @@ class GameState:
         else:
             tile = self._draw_and_handle_secret(current)
             current.hand.add(tile)
+            if isinstance(current, Human):
+                print(f"\n  >> You drew: {tile} <<")
 
         if current.hand.is_mahjong():
             raise _GameOver(current)
@@ -117,6 +123,7 @@ class GameState:
         discard = current.choose_discard()
         current.hand.discard(discard)
         self.deck.discard(discard)
+        print(f"\n{current.name} discards: {discard}")
         self.last_discard = discard
         self.last_discard_player_idx = self.current_idx
 
